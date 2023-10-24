@@ -1,1 +1,1 @@
-# cs361-project
+# Encrypted Text Editor written in Go
