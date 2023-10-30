@@ -40,11 +40,30 @@ func run(w *app.Window) error {
 		switch e := e.(type) {
 		case system.DestroyEvent:
 			return e.Err
+
 		case system.FrameEvent:
 			gtx := layout.NewContext(&ops, e)
-			textBox := material.Editor(th, &textInput, "")
-			textBox.Layout(gtx)
-
+			
+			layout.Flex{
+				
+				Axis: layout.Vertical,
+				
+			}.Layout(gtx,
+				layout.Rigid(
+					func(gtx layout.Context) layout.Dimensions {
+						
+						margins := layout.UniformInset(unit.Dp(25))
+						
+						return margins.Layout(gtx,
+							
+							func(gtx layout.Context) layout.Dimensions {
+								textBox := material.Editor(th, &textInput, "")
+								return textBox.Layout(gtx)
+							},
+						)
+					},
+				),
+			)
 			e.Frame(gtx.Ops)
 		}
 	}
