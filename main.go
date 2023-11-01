@@ -43,27 +43,13 @@ func run(w *app.Window) error {
 
 		case system.FrameEvent:
 			gtx := layout.NewContext(&ops, e)
-			
-			layout.Flex{
-				
-				Axis: layout.Vertical,
-				
-			}.Layout(gtx,
-				layout.Rigid(
-					func(gtx layout.Context) layout.Dimensions {
-						
-						margins := layout.UniformInset(unit.Dp(25))
-						
-						return margins.Layout(gtx,
-							
-							func(gtx layout.Context) layout.Dimensions {
-								textBox := material.Editor(th, &textInput, "")
-								return textBox.Layout(gtx)
-							},
-						)
-					},
-				),
-			)
+
+			inset := layout.UniformInset(unit.Dp(25))
+			inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+				textBox := material.Editor(th, &textInput, "")
+				return textBox.Layout(gtx)
+			})
+
 			e.Frame(gtx.Ops)
 		}
 	}
