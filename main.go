@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"gioui.org/app"
+	"gioui.org/example/component/icon"
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
@@ -13,6 +14,8 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
+	"gioui.org/x/component"
+	
 )
 
 func main() {
@@ -43,6 +46,11 @@ func run(w *app.Window) error {
 
 		case system.FrameEvent:
 			gtx := layout.NewContext(&ops, e)
+			
+			modal := component.NewModal()
+			appBar := component.NewAppBar(modal)
+			appBar.NavigationIcon = icon.MenuIcon
+			appBar.Layout(gtx, th, "Actions", "")
 
 			inset := layout.UniformInset(unit.Dp(25))
 			inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
@@ -52,5 +60,5 @@ func run(w *app.Window) error {
 
 			e.Frame(gtx.Ops)
 		}
-	}
+	}// indirect
 }
