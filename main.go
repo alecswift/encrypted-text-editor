@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"gioui.org/app"
-	"gioui.org/example/component/icon"
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
@@ -14,7 +13,6 @@ import (
 	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
-	"gioui.org/x/component"
 	
 )
 
@@ -37,6 +35,7 @@ func run(w *app.Window) error {
 	th := material.NewTheme()
 	var ops op.Ops
 	var textInput widget.Editor
+	var toolBar widget.Clickable
 
 	for {
 		e := <-w.Events()
@@ -46,17 +45,36 @@ func run(w *app.Window) error {
 
 		case system.FrameEvent:
 			gtx := layout.NewContext(&ops, e)
-			
-			modal := component.NewModal()
-			appBar := component.NewAppBar(modal)
-			appBar.NavigationIcon = icon.MenuIcon
-			appBar.Layout(gtx, th, "Actions", "")
 
-			inset := layout.UniformInset(unit.Dp(25))
-			inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				textBox := material.Editor(th, &textInput, "")
-				return textBox.Layout(gtx)
-			})
+			layout.Flex{
+				// Vertical alignment, from top to bottom
+				Axis: layout.Vertical,
+				
+			}.Layout(gtx,
+				
+				// The toolbar
+				layout.Rigid(
+					func(gtx layout.Context) layout.Dimensions {
+						toolBarBtn := material.Button(th, &toolBar, "Actions")
+						return toolBarBtn.Layout(gtx)
+					},
+				),
+				
+				// The main textbox
+				layout.Rigid(
+					func(gtx layout.Context) layout.Dimensions {
+						padding := layout.UniformInset(unit.Dp(10))
+						
+						return padding.Layout(gtx, 
+							func(gtx layout.Context) layout.Dimensions {
+								textBox := material.Editor(th, &textInput, "")
+								return textBox.Layout(gtx)
+							})
+					},
+				),
+			)
+
+			
 
 			e.Frame(gtx.Ops)
 		}
