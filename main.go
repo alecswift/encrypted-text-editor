@@ -1,82 +1,94 @@
 package main
 
 import (
-	// "image/color"
-	"log"
-	"os"
+	"fmt"
 
-	"gioui.org/app"
-	"gioui.org/io/system"
-	"gioui.org/layout"
-	"gioui.org/op"
-	// "gioui.org/text"
-	"gioui.org/unit"
-	"gioui.org/widget"
-	"gioui.org/widget/material"
-	
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 func main() {
-	go func() {
-		w := app.NewWindow(
-			app.Title("Text Editor"),
-			app.Size(unit.Dp(1024), unit.Dp(768)),
-		)
-		err := run(w)
-		if err != nil {
-			log.Fatal(err)
-		}
-		os.Exit(0)
-	}()
-	app.Main()
+	myApp := app.New()
+	mainWindow := myApp.NewWindow("Encrypted Text Editor")
+	mainWindow.Resize(fyne.NewSize(1200, 700))
+
+	mainWindow.SetMainMenu(actionBar(myApp))
+	
+	textBox := widget.NewMultiLineEntry()
+	textBox.AcceptsTab()
+	mainWindow.SetContent(textBox)
+
+	mainWindow.Show()
+	myApp.Run()
+	tidyUp()
 }
 
-func run(w *app.Window) error {
-	th := material.NewTheme()
-	var ops op.Ops
-	var textInput widget.Editor
-	var toolBar widget.Clickable
 
-	for {
-		e := <-w.Events()
-		switch e := e.(type) {
-		case system.DestroyEvent:
-			return e.Err
 
-		case system.FrameEvent:
-			gtx := layout.NewContext(&ops, e)
+func actionBar(myApp fyne.App) *fyne.MainMenu {
+	userGuideButton := fyne.NewMenuItem("UserGuide", func() {
+		userGuideWindow := myApp.NewWindow("User Guide")
+		userGuideWindow.Resize(fyne.NewSize(400, 240))
+		userGuideText := widget.NewLabel(
+			`Purpose: A Desktop application for securely writing, deleting, and saving text files.
+			Home page User Interface
+				Text box: Below the toolbar is a large text box for writing and deleting text.
+				Toolbar: On the top of the application is a toolbar for navigating the application.
+						The contents are detailed below from left to right.
+					Actions: A button that opens a pop down menu with the primary application actions.
+						User guide: A button that opens a pop up text box that details the user guide
+							for the application.
+						New: Opens a new, blank text file.
+						Open: Opens the file directory, the user can select any text file from the
+							local computer to open into the application. If a password has been set
+							for the requested file, then a pop up menu opens requesting the user to
+							enter their password.
+						Save: Opens the file directory, the user can select any folder in the local
+							computer to save the currently worked on text file.
+						Delete: Opens a pop up menu that confirms whether or not the user would like
+							to delete the current text file. If the user presses yes, then the current
+							file is deleted. If the user presses no, then the user returns to the
+							application.
+						Undo: Undoes the last action. For example, if a character was written last,
+							then delete that character. Or if a character was deleted last, then
+							rewrite that character.
+						Copy: Copies the selected text into the clipboard for temporary storage.
+							The copied text can be used later with the paste command.
+						Paste: Paste the previously copied text stored in the clipboard at the spot
+							selected by the cursor.
+						Set Password for file: Opens a pop up box that requests the user to enter and
+							confirm a password. Once the user has entered and confirmed a password,
+							the user can confirm and set the password for the file. Otherwise the user
+							can exit the pop up box and return to the application without setting a
+							password.
+				Exit button: Appears as an X. This button opens a pop up text box that asks the user to
+					confirm that they want to exit the application. If the user presses no, then the user
+					is returned to the application. If the user presses yes, then the application closes.
+		`)
+		userGuideWindow.SetContent(userGuideText)
+		userGuideWindow.Show()
+	})
+	newButton := fyne.NewMenuItem("New File", func() {fmt.Println("Pressed")})
+	openButton := fyne.NewMenuItem("Open a File", func() {fmt.Println("Pressed")})
+	saveButton := fyne.NewMenuItem("Save the File", func() {fmt.Println("Pressed")})
+	deleteButton := fyne.NewMenuItem("Delete the File", func() {fmt.Println("Pressed")})
+	undoButton := fyne.NewMenuItem("Undo the Last action", func() {fmt.Println("Pressed")})
+	copyButton := fyne.NewMenuItem("Copy Selected Text", func() {fmt.Println("Pressed")})
+	pasteButton := fyne.NewMenuItem("Paste Copied Text", func() {})
+	setPasswordButton := fyne.NewMenuItem("Set a Password", func() {
+		userGuideWindow := myApp.NewWindow("Set a Password")
+		userGuideWindow.Resize(fyne.NewSize(400, 240))
+		verticalLayout := layout.NewVBoxLayout()
+		userGuideWindow.SetContent()
+		userGuideWindow.Show()
+	})
+	actionPopDown := fyne.NewMenu("Actions", userGuideButton, newButton, openButton, saveButton, deleteButton, undoButton, copyButton, pasteButton, setPasswordButton)
+	actions := fyne.NewMainMenu(actionPopDown)
+	return actions
+}
 
-			layout.Flex{
-				// Vertical alignment, from top to bottom
-				Axis: layout.Vertical,
-				
-			}.Layout(gtx,
-				
-				// The toolbar
-				layout.Rigid(
-					func(gtx layout.Context) layout.Dimensions {
-						toolBarBtn := material.Button(th, &toolBar, "Actions")
-						return toolBarBtn.Layout(gtx)
-					},
-				),
-				
-				// The main textbox
-				layout.Rigid(
-					func(gtx layout.Context) layout.Dimensions {
-						padding := layout.UniformInset(unit.Dp(10))
-						
-						return padding.Layout(gtx, 
-							func(gtx layout.Context) layout.Dimensions {
-								textBox := material.Editor(th, &textInput, "")
-								return textBox.Layout(gtx)
-							})
-					},
-				),
-			)
-
-			
-
-			e.Frame(gtx.Ops)
-		}
-	}// indirect
+func tidyUp() {
+	fmt.Println("Exited")
 }
