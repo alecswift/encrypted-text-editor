@@ -5,7 +5,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -15,7 +15,15 @@ func main() {
 	mainWindow.Resize(fyne.NewSize(1200, 700))
 
 	mainWindow.SetMainMenu(actionBar(myApp))
-	
+	mainWindow.SetOnClosed(func() {
+		closeWindow := myApp.NewWindow("Confirm Exit")
+		closeWindowContent := container.NewVBox(widget.NewLabel("Please confirm that you would like to exit the application"),
+			widget.NewButton("Confirm", func() {}),
+		)
+		closeWindow.SetContent(closeWindowContent)
+		closeWindow.Show()
+	})
+
 	textBox := widget.NewMultiLineEntry()
 	textBox.AcceptsTab()
 	mainWindow.SetContent(textBox)
@@ -80,8 +88,18 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 	setPasswordButton := fyne.NewMenuItem("Set a Password", func() {
 		userGuideWindow := myApp.NewWindow("Set a Password")
 		userGuideWindow.Resize(fyne.NewSize(400, 240))
-		verticalLayout := layout.NewVBoxLayout()
-		userGuideWindow.SetContent()
+
+		password := widget.NewEntry()
+		password.SetPlaceHolder("Enter password here")
+		confirmPassword := widget.NewEntry()
+		confirmPassword.SetPlaceHolder("Confirm password here")
+		passwordWidgets := container.NewVBox(password,
+			confirmPassword,
+			widget.NewButton("Confirm", func() {
+			fmt.Println("Content was:", password.Text)}),
+			widget.NewLabel("Please enter and confirm your password. You will have to reenter the password to regain access to the file"),
+			)
+		userGuideWindow.SetContent(passwordWidgets)
 		userGuideWindow.Show()
 	})
 	actionPopDown := fyne.NewMenu("Actions", userGuideButton, newButton, openButton, saveButton, deleteButton, undoButton, copyButton, pasteButton, setPasswordButton)
