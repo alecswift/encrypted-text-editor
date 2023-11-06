@@ -84,13 +84,23 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 	newButton := fyne.NewMenuItem("New File", func() {fmt.Println("Pressed")})
 	openButton := fyne.NewMenuItem("Open a File", func() {fmt.Println("Pressed")})
 	saveButton := fyne.NewMenuItem("Save the File", func() {fmt.Println("Pressed")})
-	deleteButton := fyne.NewMenuItem("Delete the File", func() {fmt.Println("Pressed")})
+	deleteButton := fyne.NewMenuItem("Delete the File", func() {
+		deleteWindow := myApp.NewWindow("Delete")
+		deleteWindow.Resize(fyne.NewSize(400, 240))
+
+		deleteWidgets := container.NewVBox(
+			widget.NewButton("Confirm", func() {}),
+			widget.NewLabel("Please confirm that you would like to delete the file"),
+			)
+		deleteWindow.SetContent(deleteWidgets)
+		deleteWindow.Show()
+	})
 	undoButton := fyne.NewMenuItem("Undo the Last action", func() {fmt.Println("Pressed")})
 	copyButton := fyne.NewMenuItem("Copy Selected Text", func() {fmt.Println("Pressed")})
 	pasteButton := fyne.NewMenuItem("Paste Copied Text", func() {})
 	setPasswordButton := fyne.NewMenuItem("Set a Password", func() {
-		userGuideWindow := myApp.NewWindow("Set a Password")
-		userGuideWindow.Resize(fyne.NewSize(400, 240))
+		passwordWindow := myApp.NewWindow("Set a Password")
+		passwordWindow.Resize(fyne.NewSize(400, 240))
 
 		password := widget.NewEntry()
 		password.SetPlaceHolder("Enter password here")
@@ -102,8 +112,8 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 			fmt.Println("Content was:", password.Text)}),
 			widget.NewLabel("Please enter and confirm your password. You will have to reenter the password to regain access to the file"),
 			)
-		userGuideWindow.SetContent(passwordWidgets)
-		userGuideWindow.Show()
+		passwordWindow.SetContent(passwordWidgets)
+		passwordWindow.Show()
 	})
 	actionPopDown := fyne.NewMenu("Actions", userGuideButton, newButton, openButton, saveButton, deleteButton, undoButton, copyButton, pasteButton, setPasswordButton)
 	actions := fyne.NewMainMenu(actionPopDown)
