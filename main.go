@@ -15,10 +15,13 @@ func main() {
 	mainWindow.Resize(fyne.NewSize(1200, 700))
 
 	mainWindow.SetMainMenu(actionBar(myApp))
-	mainWindow.SetOnClosed(func() {
+	mainWindow.SetCloseIntercept(func() {
 		closeWindow := myApp.NewWindow("Confirm Exit")
 		closeWindowContent := container.NewVBox(widget.NewLabel("Please confirm that you would like to exit the application"),
-			widget.NewButton("Confirm", func() {}),
+			widget.NewButton("Confirm", func() {
+				mainWindow.Close()
+				closeWindow.Close()
+			}),
 		)
 		closeWindow.SetContent(closeWindowContent)
 		closeWindow.Show()
