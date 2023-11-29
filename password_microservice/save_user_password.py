@@ -2,7 +2,7 @@ import json
 import time
 
 #function to write to json file
-def write_json(new_data, filename='data.json'):
+def write_json(new_data, filename='/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/data.json'):
     with open(filename,'r+') as file:
         file_data = json.load(file)
         file_data["user_details"].append(new_data)
@@ -11,7 +11,7 @@ def write_json(new_data, filename='data.json'):
 
 #read file for username and password
 while(1): 
-    file = open("microservice.txt", "r+")
+    file = open("/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/user_password.txt", "r+")
     data = file.readlines()
     if data[0] != "User Data Stored":
 
@@ -33,7 +33,7 @@ while(1):
         file.close()
 
         #write confirmation message
-        file = open("microservice.txt", "w")
+        file = open("/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/user_password.txt", "w")
         file.write("User Data Stored")
         file.close()
     
