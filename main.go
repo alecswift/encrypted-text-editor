@@ -127,15 +127,17 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 
 func save(userName, password string) int {
 	file, err := os.Create("/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/user_password.txt")
-	if err != nil {
-        log.Fatal(err)
-	}
+	checkFor(err)
 	n, err := file.WriteString(userName + "\n" + password)
-	if err != nil {
-	 log.Fatal(err)
-	}
+	checkFor(err)
 	file.Sync()
 	return n
+}
+
+func checkFor(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func tidyUp() {
