@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -110,7 +112,9 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 		passwordWidgets := container.NewVBox(userName,
 			password,
 			widget.NewButton("Confirm", func() {
-			fmt.Println("Content was:", password.Text)}),
+			save(userName.Text, password.Text)
+			passwordWindow.Close()
+			}),
 			widget.NewLabel("Please enter a username and password. You will have to reenter the username and password to regain access to the file"),
 			)
 		passwordWindow.SetContent(passwordWidgets)
@@ -119,6 +123,19 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 	actionPopDown := fyne.NewMenu("Actions", userGuideButton, newButton, openButton, saveButton, deleteButton, undoButton, copyButton, pasteButton, setPasswordButton)
 	actions := fyne.NewMainMenu(actionPopDown)
 	return actions
+}
+
+func save(userName, password string) int {
+	file, err := os.Create("/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/user_password.txt")
+	if err != nil {
+        log.Fatal(err)
+	}
+	n, err := file.WriteString(userName + "\n" + password)
+	if err != nil {
+	 log.Fatal(err)
+	}
+	file.Sync()
+	return n
 }
 
 func tidyUp() {
