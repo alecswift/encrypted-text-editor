@@ -102,15 +102,16 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 		passwordWindow := myApp.NewWindow("Set a Password")
 		passwordWindow.Resize(fyne.NewSize(400, 240))
 
+		userName := widget.NewEntry()
+		userName.SetPlaceHolder("Enter username here")
 		password := widget.NewEntry()
 		password.SetPlaceHolder("Enter password here")
-		confirmPassword := widget.NewEntry()
-		confirmPassword.SetPlaceHolder("Confirm password here")
-		passwordWidgets := container.NewVBox(password,
-			confirmPassword,
+
+		passwordWidgets := container.NewVBox(userName,
+			password,
 			widget.NewButton("Confirm", func() {
 			fmt.Println("Content was:", password.Text)}),
-			widget.NewLabel("Please enter and confirm your password. You will have to reenter the password to regain access to the file"),
+			widget.NewLabel("Please enter a username and password. You will have to reenter the username and password to regain access to the file"),
 			)
 		passwordWindow.SetContent(passwordWidgets)
 		passwordWindow.Show()
