@@ -57,6 +57,7 @@ Home page User Interface
 `
 
 func main() {
+	// main loop for to run the application
 	myApp := app.New()
 	setUpMainWindow(myApp)
 	myApp.Run()
@@ -64,6 +65,7 @@ func main() {
 }
 
 func setUpMainWindow(myApp fyne.App) {
+	// sets up the main window for the given application
 	mainWindow := myApp.NewWindow("Encrypted Text Editor")
 	mainWindow.Resize(fyne.NewSize(1200, 700))
 
@@ -77,6 +79,7 @@ func setUpMainWindow(myApp fyne.App) {
 }
 
 func mainWindowCloseIntercept(myApp fyne.App, mainWindow fyne.Window) {
+	// sets up a window to open upon closing for the given application
 	mainWindow.SetCloseIntercept(func() {
 		closeWindow := myApp.NewWindow("Confirm Exit")
 		closeWindowContent := makeCloseWindowContent(closeWindow, mainWindow)
@@ -86,6 +89,7 @@ func mainWindowCloseIntercept(myApp fyne.App, mainWindow fyne.Window) {
 }
 
 func makeCloseWindowContent(closeWindow, mainWindow fyne.Window) *fyne.Container {
+	// Adds text and a confirmation button for the given close window
 	closeWindowContent := container.NewVBox(
 		widget.NewLabel("Please confirm that you would like to exit the application"),
 		widget.NewButton("Confirm", func() {
@@ -96,9 +100,8 @@ func makeCloseWindowContent(closeWindow, mainWindow fyne.Window) *fyne.Container
 	return closeWindowContent
 }
 
-
-
 func actionBar(myApp fyne.App) *fyne.MainMenu {
+	// sets up and returns the buttons for the action bar main menu for the given app
 	buttons := []*fyne.MenuItem{
 		makeUserGuideButton(myApp), makeNewButton(myApp), makeOpenButton(myApp),
 		makeSaveButton(myApp), makeDeleteButton(myApp), makeUndoButton(myApp),
@@ -107,10 +110,6 @@ func actionBar(myApp fyne.App) *fyne.MainMenu {
 	actionPopDown := fyne.NewMenu("Actions", buttons...)
 	actions := fyne.NewMainMenu(actionPopDown)
 	return actions
-}
-
-func makeActionBarButtons() {
-
 }
 
 func makeUserGuideButton(myApp fyne.App) *fyne.MenuItem {
@@ -199,7 +198,7 @@ func makePasswordWidgets(passwordWindow fyne.Window) *fyne.Container {
 }
 
 func save(userName, password string) int {
-
+	// Saves the given username and password to a data.json file using a microservice
 	file, err := os.Create(MSCommPath)
 	checkFor(err)
 	n, err := file.WriteString(userName + "\n" + password)
@@ -211,6 +210,7 @@ func save(userName, password string) int {
 }
 
 func runMicroservice() {
+	// runs the microservice that saves the username and password
 	cmd := exec.Command("/usr/bin/python3", MicroservicePath)
 	if errors.Is(cmd.Err, exec.ErrDot) {
 		cmd.Err = nil
