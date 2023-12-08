@@ -13,9 +13,14 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-const MicroservicePath = "/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/save_user_password.py"
-const MSCommPath = "/home/alec/Desktop/code/osu_projects/encrypted_text_editor/password_microservice/user_password.txt"
-const UserGuideText = `Purpose: A Desktop application for securely writing, deleting, and saving text files.
+const MicroservicePath = "password_microservice/save_user_password.py"
+const MSCommPath = "password_microservice/user_password.txt"
+const UserPasswordText = `
+	Please enter a username and password. You will have to reenter the username
+	and password to regain access to the file
+	`
+const UserGuideText = `
+Purpose: A Desktop application for securely writing, deleting, and saving text files.
 Home page User Interface
 	Text box: Below the toolbar is a large text box for writing and deleting text.
 	Toolbar: On the top of the application is a toolbar for navigating the application.
@@ -74,15 +79,21 @@ func setUpMainWindow(myApp fyne.App) {
 func mainWindowCloseIntercept(myApp fyne.App, mainWindow fyne.Window) {
 	mainWindow.SetCloseIntercept(func() {
 		closeWindow := myApp.NewWindow("Confirm Exit")
-		closeWindowContent := container.NewVBox(widget.NewLabel("Please confirm that you would like to exit the application"),
-			widget.NewButton("Confirm", func() {
-				mainWindow.Close()
-				closeWindow.Close()
-			}),
-		)
+		closeWindowContent := makeCloseWindowContent(closeWindow, mainWindow)
 		closeWindow.SetContent(closeWindowContent)
 		closeWindow.Show()
 	})
+}
+
+func makeCloseWindowContent(closeWindow, mainWindow fyne.Window) *fyne.Container {
+	closeWindowContent := container.NewVBox(
+		widget.NewLabel("Please confirm that you would like to exit the application"),
+		widget.NewButton("Confirm", func() {
+			mainWindow.Close()
+			closeWindow.Close()
+		}),
+	)
+	return closeWindowContent
 }
 
 
@@ -182,7 +193,7 @@ func makePasswordWidgets(passwordWindow fyne.Window) *fyne.Container {
 		widget.NewButton("Confirm", func() {save(userName.Text, password.Text)
 		passwordWindow.Close()
 		}),
-		widget.NewLabel("Please enter a username and password. You will have to reenter the username and password to regain access to the file"),
+		widget.NewLabel(UserPasswordText),
 	)
 	return passwordWidgets
 }
